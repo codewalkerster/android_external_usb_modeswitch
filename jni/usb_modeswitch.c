@@ -1554,7 +1554,7 @@ int checkSuccess()
 		 * Target device on the same bus with higher device number is returned,
 		 * description is read for syslog message
 		 */
-		for (i=i; i < CheckSuccess; i++) {
+		for (; i < CheckSuccess; i++) {
 			SHOW_PROGRESS(output," Search for target devices ...\n");
 			dev = search_devices(&newTargetCount, TargetVendor, TargetProductList,
 					TargetClass, 0, SEARCH_TARGET);
@@ -1867,7 +1867,7 @@ char* ReadParseParam(const char* FileName, char *VariableName)
 	int Line=0;
 	unsigned Len=0, Pos=0;
 	static char Str[LINE_DIM];
-	char *token, *configPos;
+	char *token = NULL, *configPos;
 	FILE *file = NULL;
 
 	// Reading and storing input during the first call

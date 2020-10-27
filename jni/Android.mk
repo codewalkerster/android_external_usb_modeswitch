@@ -14,6 +14,6 @@ LOCAL_LDLIBS    := -llog
 LOCAL_MODULE    := usb_modeswitch
 LOCAL_SRC_FILES := usb_modeswitch.c
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../libusb/libusb
-LOCAL_SHARED_LIBRARIES := libUsb
+LOCAL_SHARED_LIBRARIES := libusb
 
 include $(BUILD_EXECUTABLE)
