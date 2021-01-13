@@ -16,6 +16,4 @@ LOCAL_SRC_FILES := usb_modeswitch.c
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../libusb/libusb
 LOCAL_SHARED_LIBRARIES := libusb
 
-LOCAL_VENDOR_MODULE := true
-
 include $(BUILD_EXECUTABLE)
