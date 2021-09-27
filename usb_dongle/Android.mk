@@ -31,7 +31,7 @@ LOCAL_PROPRIETARY_MODULE := true
 LOCAL_CLANG := true
 LOCAL_TIDY := true
 LOCAL_TIDY_FLAGS := $(common_local_tidy_flags)
-LOCAL_TIDY_CHECKS := $(common_local_tidy_checks)
+#LOCAL_TIDY_CHECKS := $(common_local_tidy_checks)
 LOCAL_SRC_FILES := \
 	main.cpp \
 	$(common_src_files)
