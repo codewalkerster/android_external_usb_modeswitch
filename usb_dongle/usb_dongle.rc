@@ -2,3 +2,7 @@ service usb_dongle /vendor/bin/usb_dongle
     class main
     oneshot
 
+service rtl_usb_dongle /vendor/bin/usb_modeswitch -W -v 0bda -p 1a2b -c /vendor/etc/usb_modeswitch.d/0bda_1a2b
+    class main
+    disabled
+    oneshot
