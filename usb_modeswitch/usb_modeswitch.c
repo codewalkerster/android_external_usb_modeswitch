@@ -510,7 +510,9 @@ int main(int argc, char **argv)
 	}
 
 	if (verbose)
+#if LIBUSB_API_VERSION < 0x01000108
 		libusb_set_debug(ctx, 3);
+#endif
 
 	if (mbim) {
 		printf("%d\n", findMBIMConfig(DefaultVendor, DefaultProduct, searchMode) );
