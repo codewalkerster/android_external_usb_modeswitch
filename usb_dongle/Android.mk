@@ -42,6 +42,6 @@ LOCAL_CFLAGS := $(common_cflags)
 LOCAL_CFLAGS += -Werror=format
 LOCAL_CFLAGS += -DUSE_USB_MODE_SWITCH
 
-LOCAL_SHARED_LIBRARIES := $(common_shared_libraries)
+LOCAL_SHARED_LIBRARIES := $(common_shared_libraries) libcutils
 
 include $(BUILD_EXECUTABLE)

@@ -20,6 +20,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+#include <cutils/properties.h>
 
 #define LOG_TAG "USB_DONGLE"
 
@@ -79,9 +80,14 @@ int G3Dev::handleUsbEvent(NetlinkEvent *evt) {
             sprintf(configure_file, "/vendor/etc/usb_modeswitch.d/%04x_%04x", vid, pid);
             if( access(configure_file, 0) == 0 )
             {
+                SLOGD("=== setprop sys.wifi_hal_legacy stop");
+                property_set("sys.wifi_hal_legacy", "stop");
 		sprintf(modeswitch_cmd, "/vendor/bin/usb_modeswitch -W -v %04x -p %04x -c %s &", vid, pid,configure_file);
 	    	SLOGD("=== USB Switch: %s", modeswitch_cmd);
                 system(modeswitch_cmd);
+            } else {
+                SLOGD("=== setprop sys.wifi_hal_legacy start");
+                property_set("sys.wifi_hal_legacy", "start");
             }
         }
 	}
