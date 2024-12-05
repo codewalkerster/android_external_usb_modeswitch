@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <dirent.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 
@@ -76,8 +77,6 @@ int G3Dev::handleUsbEvent(NetlinkEvent *evt) {
 
             sprintf(configure_file, "/vendor/etc/usb_modeswitch.d/%04x_%04x", vid, pid);
             if( access(configure_file, 0) == 0 ) {
-                SLOGD("=== setprop sys.wifi_hal_legacy stop");
-                property_set("sys.wifi_hal_legacy", "stop");
                 sprintf(modeswitch_cmd, "/vendor/bin/usb_modeswitch -W -v %04x -p %04x -c %s &", vid, pid,configure_file);
                 SLOGD("=== USB Switch: %s", modeswitch_cmd);
                 system(modeswitch_cmd);
@@ -109,25 +108,53 @@ int G3Dev::handleUsb() {
 
     char configure_file[2048];
     int pid,vid;
-    this->get_tty_id(&vid,& pid);
-
-    sprintf(configure_file, "/vendor/etc/usb_modeswitch.d/%04x_%04x", vid,pid);
-    SLOGD("=== config_file is: %04x_%04x", vid ,pid);
-    if( access(configure_file, 0) == 0 ) {
-        sprintf(modeswitch_cmd, "/vendor/bin/usb_modeswitch -W -v %04x -p %04x -c %s &", vid, pid,configure_file);
-        SLOGD("=== USB Switch: %s", modeswitch_cmd);
-        system(modeswitch_cmd);
+    DIR *dir;
+    struct dirent *dent;
+    char path[PATH_MAX] = "/sys/bus/usb/devices";
+    dir = opendir(path);
+    if (dir != NULL) {
+        char buf[8] = {'\0', };
+        while ((dent = readdir(dir)) != NULL) {
+            sprintf(path, "/sys/bus/usb/devices/%s", dent->d_name);
+            char product[PATH_MAX] = {'\0', };
+            strcpy(product, path);
+            strlcat(product, "/product", PATH_MAX);
+            FILE* fp = NULL;
+            fp = fopen(product, "r");
+            if (fp != NULL) {
+                if (fread(buf, 1, 4, fp)) {
+                    if (strcmp(buf, "DISK") == 0) {
+                        SLOGD("found DISK device");
+                        SLOGD("=== setprop sys.wifi_hal_legacy stop");
+                        property_set("sys.wifi_hal_legacy", "stop");
+                        this->get_tty_id(&vid, &pid, path);
+                        sprintf(configure_file, "/vendor/etc/usb_modeswitch.d/%04x_%04x", vid,pid);
+                        SLOGD("=== config_file is: %04x_%04x", vid ,pid);
+                        if( access(configure_file, 0) == 0 ) {
+                            sprintf(modeswitch_cmd, "/vendor/bin/usb_modeswitch -W -v %04x -p %04x -c %s &", vid, pid,configure_file);
+                            SLOGD("=== USB Switch: %s", modeswitch_cmd);
+                            system(modeswitch_cmd);
+                            break;
+                        }
+                    }
+                }
+                fclose(fp);
+            }
+        }
     }
+    closedir(dir);
+
     return 0;
 }
 
-int G3Dev::get_tty_id(int *vid, int* pid) {
+int G3Dev::get_tty_id(int *vid, int* pid, const char* path) {
     char linkto[1024]="";
     //SLOGD("began find device path");
     //SLOGD("device path: %s", tty_path);////
 
     //LOGD("USB device path: %s", plink);
-    char pidpath[PATH_MAX]="/sys/bus/usb/devices/1-1";
+    char pidpath[PATH_MAX];
+    strcpy(pidpath, path);
 
     FILE* fp = NULL;
     char buf[5] = {0};
@@ -142,10 +169,12 @@ int G3Dev::get_tty_id(int *vid, int* pid) {
     }
     fclose(fp);
     *vid = atox(buf, 16);
-    char vidpath[PATH_MAX]="/sys/bus/usb/devices/1-1";
+    char vidpath[PATH_MAX];
+    strcpy(vidpath, path);
     //sys/bus/usb/devices/1-1	
     strlcat(vidpath, "/idProduct",PATH_MAX);
     //LOGD("Product path: %s", plink);
+    SLOGD("Product path: %s", vidpath);
     fp = fopen(vidpath, "r");
     if(fp == NULL)
         return -3;

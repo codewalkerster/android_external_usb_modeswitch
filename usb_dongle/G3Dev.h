@@ -30,7 +30,7 @@ public:
     int handleUsbEvent(NetlinkEvent *evt);
     int handleScsiEvent(NetlinkEvent *evt);
     int handleUsb();
-    int get_tty_id(int *vid, int* pid);
+    int get_tty_id(int *vid, int* pid, const char* path);
     int atox( const char * line, int f_base );
 };
 
