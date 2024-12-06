@@ -117,7 +117,7 @@ int G3Dev::handleUsb() {
         while ((dent = readdir(dir)) != NULL) {
             sprintf(path, "/sys/bus/usb/devices/%s", dent->d_name);
             char product[PATH_MAX] = {'\0', };
-            strcpy(product, path);
+            strncpy(product, path, strlen(path));
             strlcat(product, "/product", PATH_MAX);
             FILE* fp = NULL;
             fp = fopen(product, "r");
@@ -153,8 +153,8 @@ int G3Dev::get_tty_id(int *vid, int* pid, const char* path) {
     //SLOGD("device path: %s", tty_path);////
 
     //LOGD("USB device path: %s", plink);
-    char pidpath[PATH_MAX];
-    strcpy(pidpath, path);
+    char pidpath[PATH_MAX] = {'\0', };
+    strncpy(pidpath, path, strlen(path));
 
     FILE* fp = NULL;
     char buf[5] = {0};
@@ -169,8 +169,8 @@ int G3Dev::get_tty_id(int *vid, int* pid, const char* path) {
     }
     fclose(fp);
     *vid = atox(buf, 16);
-    char vidpath[PATH_MAX];
-    strcpy(vidpath, path);
+    char vidpath[PATH_MAX] = {'\0', };
+    strncpy(vidpath, path, strlen(path));
     //sys/bus/usb/devices/1-1	
     strlcat(vidpath, "/idProduct",PATH_MAX);
     //LOGD("Product path: %s", plink);
