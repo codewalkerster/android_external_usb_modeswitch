@@ -12,6 +12,7 @@ LOCAL_C_INCLUDES :=$(INCLUDES)
 LOCAL_SHARED_LIBRARIES := libusb
 
 LOCAL_CFLAGS += -Wno-self-assign -Wno-sometimes-uninitialized
+LOCAL_CFLAGS += -DODROIDC5
 
 $(shell mkdir -p $(PRODUCT_OUT)/vendor/etc)
 $(shell cp -R $(LOCAL_PATH)/usb_modeswitch.d $(PRODUCT_OUT)/vendor/etc)

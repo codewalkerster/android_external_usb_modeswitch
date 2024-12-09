@@ -1010,7 +1010,11 @@ int switchSendMessage ()
 			ret = read_bulk(ResponseEndpoint, ByteString, strlen(Messages[i])/2 );
 		}
 		SHOW_PROGRESS(output,"\n");
+#ifdef ODROIDC5
+		if (ret < 0 && i >= MSG_DIM)
+#else
 		if (ret < 0)
+#endif
 			goto skip;
 	}
 
